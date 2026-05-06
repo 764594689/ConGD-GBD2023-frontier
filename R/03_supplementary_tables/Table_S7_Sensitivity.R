@@ -115,6 +115,10 @@ df_table <- df_compare %>%
     PMR_struct = paste0(formatC(round(pmr_struct, 2), format = "f", digits = 2), "%"),
     PMR_diff = paste0(formatC(round(diff_pmr, 2), format = "f", digits = 2), " pp")
   ) %>%
+  # Replace ASCII hyphen-minus with Unicode minus sign (U+2212) in numeric strings
+  mutate(across(c(ASMR_all, ASMR_struct, ASMR_diff, ASMR_pct,
+                  PMR_all, PMR_struct, PMR_diff),
+                ~ gsub("-", "−", .x, fixed = TRUE))) %>%
   select(Location, ASMR_all, ASMR_struct, ASMR_diff, ASMR_pct,
          PMR_all, PMR_struct, PMR_diff)
 

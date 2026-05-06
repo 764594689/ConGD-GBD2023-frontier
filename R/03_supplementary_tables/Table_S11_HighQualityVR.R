@@ -32,6 +32,11 @@ genetic_list <- c(structural_list, hemoglobin_list)
 
 # --- Load GBD stars and harmonize names to GBD location_name ---
 stars <- read_csv(path_stars, show_col_types = FALSE)
+# Normalize country-name apostrophes (straight ' -> smart ’)
+if ("location_name" %in% colnames(stars)) {
+  stars <- stars %>% mutate(location_name = gsub("'", "’", location_name, fixed = TRUE))
+}
+
 
 name_map <- c(
   "UK" = "United Kingdom",
@@ -67,6 +72,8 @@ cat(sprintf("High-quality VR (≥4 stars): %d countries\n", length(high_q)))
 
 # --- Country burden ---
 df_raw <- read_csv(path_country, show_col_types = FALSE)
+# Normalize country-name apostrophes (straight ' -> smart ’)
+df_raw <- df_raw %>% mutate(location_name = gsub("'", "’", location_name, fixed = TRUE))
 
 df_rate <- df_raw %>%
   filter(year == 2023, age_name == "<5 years", sex_name == "Both",

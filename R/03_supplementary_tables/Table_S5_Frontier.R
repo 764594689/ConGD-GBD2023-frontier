@@ -65,15 +65,15 @@ extract_diag <- function(model, data) {
 d05 <- extract_diag(qr_05, df_final)
 d10 <- extract_diag(qr_10, df_final)
 
-cat(sprintf("tau=0.05: R²=%.4f, Coverage=%.1f%%\n", d05$pseudo_r2, d05$coverage))
-cat(sprintf("tau=0.10: R²=%.4f, Coverage=%.1f%%\n", d10$pseudo_r2, d10$coverage))
+cat(sprintf("τ=0.05: R²=%.4f, Coverage=%.1f%%\n", d05$pseudo_r2, d05$coverage))
+cat(sprintf("τ=0.10: R²=%.4f, Coverage=%.1f%%\n", d10$pseudo_r2, d10$coverage))
 
 df_table <- tibble(
   Parameter = c("Pseudo-R\u00B2", "Empirical coverage (%)", "Interior knots (SDI)", "Boundary knots (SDI)"),
-  `tau = 0.05` = c(formatC(d05$pseudo_r2, format = "f", digits = 4),
+  `τ = 0.05` = c(formatC(d05$pseudo_r2, format = "f", digits = 4),
                    paste0(formatC(d05$coverage, format = "f", digits = 1), "%"),
                    d05$knots, d05$boundary),
-  `tau = 0.10` = c(formatC(d10$pseudo_r2, format = "f", digits = 4),
+  `τ = 0.10` = c(formatC(d10$pseudo_r2, format = "f", digits = 4),
                    paste0(formatC(d10$coverage, format = "f", digits = 1), "%"),
                    d10$knots, d10$boundary)
 )

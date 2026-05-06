@@ -29,6 +29,11 @@ genetic_list <- c(structural_list, hemoglobin_list)
 
 # --- Read data ---
 df_raw <- read_csv(path_country, show_col_types = FALSE)
+# Normalize country-name apostrophes (straight ' -> smart ’)
+if ("location_name" %in% colnames(df_raw)) {
+  df_raw <- df_raw %>% mutate(location_name = gsub("'", "’", location_name, fixed = TRUE))
+}
+
 
 df_base <- df_raw %>%
   filter(year == 2023, age_name == "<5 years", sex_name == "Both",

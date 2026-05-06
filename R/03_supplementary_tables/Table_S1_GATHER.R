@@ -50,7 +50,7 @@ df_s4 <- tibble(
     "Discussion: Limitations (ascertainment bias in LMICs, mortality-only framing).",
     "Methods: SDI covariate from GBD 2023 Socio-Demographic Index database.",
     "Methods: Descriptive epidemiology + quantile regression frontier analysis.",
-    "Methods: Quantile regression (tau=0.05) with natural cubic splines (df=3) on log-ASMR vs SDI.",
+    "Methods: Quantile regression (τ=0.05) with natural cubic splines (df=3) on log-ASMR vs SDI.",
     "Methods & Table S7: Model diagnostics, pseudo-R\u00B2, knot sensitivity.",
     "Figures S1, S3, S5; Tables S7, S9: Sensitivity and cross-validation results.",
     "Methods: GBD uncertainty intervals propagated; bootstrap CI for frontier.",
