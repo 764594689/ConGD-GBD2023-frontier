@@ -1,0 +1,38 @@
+# R session and history
+.Rhistory
+.RData
+.Rapp.history
+.RDataTmp
+.Ruserdata
+
+# RStudio personal workspace state — never commit
+.Rproj.user/
+# (note: ConGD-GBD2023-frontier.Rproj IS committed so users can open in RStudio)
+
+# Generated outputs (keep code and data, not derived results)
+outputs/
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+desktop.ini
+*~
+*.swp
+.idea/
+.vscode/
+
+# Common credential files (defensive — none expected here)
+.env
+*.key
+secrets.*
+
+# Compiled documents and intermediate render artefacts
+*.aux
+*.log
+*.toc
+*.out
+*.synctex.gz
+
+# Large local raw GBD downloads (do NOT redistribute the full GHDx export)
+raw_gbd/
+*.zip.original
