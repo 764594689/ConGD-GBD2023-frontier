@@ -107,7 +107,7 @@ resid_10 <- residuals(qr_model_10)
 pseudo_r2_10 <- 1 - sum(rho_tau(resid_10, 0.10)) /
   sum(rho_tau(y_log - quantile(y_log, 0.10), 0.10))
 
-cat(sprintf("Pseudo-R² (tau=0.05) = %.4f\n", pseudo_r2_05))
+cat(sprintf("Pseudo-R² (τ=0.05) = %.4f\n", pseudo_r2_05))
 cat(sprintf("Pseudo-R² (tau=0.10) = %.4f\n", pseudo_r2_10))
 
 # Coefficients
