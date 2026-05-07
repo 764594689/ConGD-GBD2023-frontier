@@ -24,8 +24,8 @@ df_s1 <- tibble(
     "Sickle cell disorders", "Thalassemias",
     "G6PD deficiency", "Other hemoglobinopathies and hemolytic anemias"
   ),
-  GBD_Cause_ID = c(643, 642, 645, 644, 644, 647, 646, 645, 648,
-                    614, 613, 615, 618),
+  GBD_Cause_ID = c(643, 642, 645, 648, 644, 651, 650, 649, 652,
+                    615, 614, 616, 618),
   Rationale = c(
     "Largest proportion of fatal congenital defects globally.",
     "Leading congenital cause of CNS-related neonatal death.",

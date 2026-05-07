@@ -110,7 +110,13 @@ format_row <- function(df) {
 
 make_ft <- function(df, subtitle) {
   df %>% format_row() %>% flextable() %>%
-    set_header_labels(Gap_pct = "Gap %") %>%
+    set_header_labels(
+      SDI_Quintile = "SDI Quintile",
+      Observed_ASMR = "Observed ASMR",
+      Frontier_ASMR = "Frontier ASMR",
+      Efficiency_Gap = "Efficiency Gap",
+      Gap_pct = "Gap %"
+    ) %>%
     font(fontname = "Times New Roman", part = "all") %>%
     fontsize(size = 10, part = "all") %>% bold(part = "header") %>%
     align(align = "center", part = "all") %>%

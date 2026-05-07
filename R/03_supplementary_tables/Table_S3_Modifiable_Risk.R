@@ -33,12 +33,12 @@ df_s3 <- tibble(
     "Other hemoglobinopathies and hemolytic anemias"
   ),
   Category = c(rep("Structural", 9), rep("Hemoglobinopathy", 4)),
-  Etiologic_Modifiability = c(
+  Etiologic Modifiability = c(
     "50\u201370%", "10\u201325%", "5\u201310%", "<5%", "<5%",
     "<5%", "<5%", "<5%", "Variable",
     "Low (Mendelian)", "Low (Mendelian)", "Low (X-linked)", "Low (Mendelian)"
   ),
-  Primary_Etiologic_Lever = c(
+  Primary Etiologic Lever = c(
     "Folic acid fortification / supplementation",
     "Maternal smoking, alcohol, nutrition",
     "Maternal diabetes, rubella, obesity",
@@ -53,7 +53,7 @@ df_s3 <- tibble(
     "Carrier screening; avoidance of clinical triggers",
     "Carrier screening / genetic counselling"
   ),
-  Mortality_Modifiability = c(
+  Mortality Modifiability = c(
     "High (surgical repair)",
     "High (surgical repair)",
     "High (surgical repair)",
@@ -68,7 +68,7 @@ df_s3 <- tibble(
     "High (avoidance of triggers; phototherapy; transfusion)",
     "Moderate to high (transfusion + supportive care)"
   ),
-  Primary_Mortality_Lever = c(
+  Primary Mortality Lever = c(
     "Pediatric surgical capacity",
     "Pediatric surgical capacity",
     "Pediatric cardiac surgical capacity",
@@ -83,7 +83,7 @@ df_s3 <- tibble(
     "Newborn screening; trigger education",
     "Transfusion access; etiologic workup"
   ),
-  Key_Reference = c(
+  Key Reference = c(
     "Czeizel 1992; Blencowe 2018",
     "Mossey 2009",
     "Jenkins 2007; Liu 2019",
