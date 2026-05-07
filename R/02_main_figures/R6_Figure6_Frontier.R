@@ -75,7 +75,7 @@ df_final <- df_mortality %>%
 cat(sprintf("Countries in analysis: %d\n", nrow(df_final)))
 
 # ==============================================================================
-# Quantile regression — natural cubic splines (df=3)
+# Quantile regression — natural cubic splines (df = 3)
 # ==============================================================================
 qr_model_05 <- rq(log(total_rate) ~ ns(sdi_value, df = 3),
                    tau = 0.05, data = df_final)
@@ -107,7 +107,7 @@ resid_10 <- residuals(qr_model_10)
 pseudo_r2_10 <- 1 - sum(rho_tau(resid_10, 0.10)) /
   sum(rho_tau(y_log - quantile(y_log, 0.10), 0.10))
 
-cat(sprintf("Pseudo-R² (τ=0.05) = %.4f\n", pseudo_r2_05))
+cat(sprintf("Pseudo-R² (τ = 0.05) = %.4f\n", pseudo_r2_05))
 cat(sprintf("Pseudo-R² (tau=0.10) = %.4f\n", pseudo_r2_10))
 
 # Coefficients

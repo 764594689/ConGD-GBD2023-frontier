@@ -115,7 +115,7 @@ cat("Figure 7 saved to:", output_dir, "\n")
 summarise_fit <- function(fit, label) {
   cat(sprintf("\n%s:\n", label))
   cat(sprintf("  N countries: %d\n", nrow(fit$data)))
-  preds <- exp(predict(rq(log(rate) ~ ns(sdi_value, df=3), tau=0.05, data=fit$data),
+  preds <- exp(predict(rq(log(rate) ~ ns(sdi_value, df = 3), tau=0.05, data=fit$data),
                        newdata = data.frame(sdi_value = c(0.3, 0.5, 0.7, 0.9))))
   cat(sprintf("  Frontier at SDI=0.3: %.2f; SDI=0.5: %.2f; SDI=0.7: %.2f; SDI=0.9: %.2f\n",
               preds[1], preds[2], preds[3], preds[4]))
