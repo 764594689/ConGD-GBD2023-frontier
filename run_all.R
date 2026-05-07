@@ -59,4 +59,15 @@ supp_figs <- list.files(here("R", "04_supplementary_figures"),
                         pattern = "\\.R$", full.names = FALSE)
 for (f in sort(supp_figs)) run_script(file.path("R", "04_supplementary_figures", f))
 
+
+# ----------------------------------------------------------------------------
+# Note on italic formatting:
+# Statistical symbols (df, n, P, R², t) that appear in long inline contexts
+# (e.g., paragraph footnotes within tables) should be italicized for
+# publication. Tables S5 and S11 use as_paragraph(as_i(...)) for inline
+# italic. For Tables S1, S6, S7, S12, italic formatting was applied
+# manually in the submitted docx; re-running these scripts produces
+# substantively identical output without italic styling on inline symbols.
+# ----------------------------------------------------------------------------
+
 cat("\n\nAll analyses complete. Check outputs/ for results.\n")
