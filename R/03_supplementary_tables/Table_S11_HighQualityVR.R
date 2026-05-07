@@ -1,6 +1,6 @@
 # ==============================================================================
 # Sensitivity Analysis: Frontier re-estimated on high-quality VR countries
-# (GBD data quality rating ≥4 stars, per GBD 2019 appendix Table S7)
+# (GBD data quality rating ≥ 4 stars, per GBD 2019 appendix Table S7)
 # Addresses reviewer concern #1: ascertainment bias inflating avoidable deaths
 # ==============================================================================
 library(tidyverse)
@@ -68,7 +68,7 @@ stars <- stars %>% mutate(location_name = ifelse(country %in% names(name_map),
                                                  name_map[country], country))
 
 high_q <- stars %>% filter(stars >= 4) %>% pull(location_name)
-cat(sprintf("High-quality VR (≥4 stars): %d countries\n", length(high_q)))
+cat(sprintf("High-quality VR (≥ 4 stars): %d countries\n", length(high_q)))
 
 # --- Country burden ---
 df_raw <- read_csv(path_country, show_col_types = FALSE)
@@ -120,7 +120,7 @@ df_final$avoid_main <- df_final$total_deaths * (df_final$gap_main / df_final$tot
 avoid_main_total <- sum(df_final$avoid_main, na.rm = TRUE)
 avoid_main_pct   <- avoid_main_total / sum(df_final$total_deaths) * 100
 
-# --- (2) SENSITIVITY frontier: fit on ≥4-star countries only ---
+# --- (2) SENSITIVITY frontier: fit on ≥ 4-star countries only ---
 df_hq <- df_final %>% filter(high_quality_vr)
 qr_hq <- rq(log(total_rate) ~ ns(sdi_value, df = 3), tau = 0.05, data = df_hq)
 
@@ -139,7 +139,7 @@ cat("================================================\n")
 cat(sprintf("MAIN (all 204 countries):\n"))
 cat(sprintf("  Avoidable deaths = %s (%.1f%% of total)\n",
             format(round(avoid_main_total), big.mark = ","), avoid_main_pct))
-cat(sprintf("HIGH-QUALITY VR (frontier from ≥4-star only, applied globally):\n"))
+cat(sprintf("HIGH-QUALITY VR (frontier from ≥ 4-star only, applied globally):\n"))
 cat(sprintf("  Avoidable deaths = %s (%.1f%% of total)\n",
             format(round(avoid_hq_total), big.mark = ","), avoid_hq_pct))
 cat(sprintf("  Ratio vs main: %.2fx\n", avoid_hq_total / avoid_main_total))
@@ -209,9 +209,12 @@ ft <- ft_df %>% flextable() %>%
   padding(padding = 4, part = "all") %>%
   set_table_properties(layout = "autofit") %>%
   set_caption("Table S11. Sensitivity of avoidable ConGD deaths estimates to frontier specification.") %>%
-  add_footer_lines(sprintf(
-    "Main frontier: τ=0.05 quantile regression on log-ASMR vs SDI (natural cubic spline, df=3), all %d countries. HQ-VR frontier: same specification but fitted only on %d countries with GBD data quality rating ≥4 stars, then applied to all countries to recompute efficiency gaps. Source of star ratings: GBD 2019 appendix Table S7.",
-    nrow(df_final), sum(df_final$high_quality_vr)
+  add_footer_lines(values = as_paragraph(
+    "Main frontier: ", as_i("\u03C4"), " = 0.05 quantile regression on log-ASMR vs SDI (natural cubic spline, ",
+    as_i("df"), " = 3), all ", as.character(nrow(df_final)),
+    " countries. HQ-VR frontier: same specification but fitted only on ",
+    as.character(sum(df_final$high_quality_vr)),
+    " countries with GBD data quality rating \u2265 4 stars, then applied to all countries to recompute efficiency gaps. Source of star ratings: GBD 2019 appendix Table S7."
   ))
 
 save_as_docx(ft, path = file.path(output_dir, "Table_S11_HighQualityVR.docx"),

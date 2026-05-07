@@ -65,8 +65,8 @@ extract_diag <- function(model, data) {
 d05 <- extract_diag(qr_05, df_final)
 d10 <- extract_diag(qr_10, df_final)
 
-cat(sprintf("τ=0.05: R²=%.4f, Coverage=%.1f%%\n", d05$pseudo_r2, d05$coverage))
-cat(sprintf("τ=0.10: R²=%.4f, Coverage=%.1f%%\n", d10$pseudo_r2, d10$coverage))
+cat(sprintf("τ = 0.05: R²=%.4f, Coverage=%.1f%%\n", d05$pseudo_r2, d05$coverage))
+cat(sprintf("τ = 0.10: R²=%.4f, Coverage=%.1f%%\n", d10$pseudo_r2, d10$coverage))
 
 df_table <- tibble(
   Parameter = c("Pseudo-R\u00B2", "Empirical coverage (%)", "Interior knots (SDI)", "Boundary knots (SDI)"),
@@ -90,6 +90,15 @@ ft <- df_table %>% flextable() %>%
   padding(padding = 5, part = "all") %>%
   set_table_properties(layout = "autofit") %>%
   set_caption("Table S5. Frontier Model Diagnostics (2023).")
+
+# Apply italic formatting to statistical symbols (R², τ)
+ft <- ft %>%
+  compose(j = "Parameter", i = 1, part = "body",
+          value = as_paragraph("Pseudo-", as_i("R\u00B2"))) %>%
+  compose(j = "\u03C4 = 0.05", part = "header",
+          value = as_paragraph(as_i("\u03C4"), " = 0.05")) %>%
+  compose(j = "\u03C4 = 0.10", part = "header",
+          value = as_paragraph(as_i("\u03C4"), " = 0.10"))
 
 save_as_docx(ft, path = save_word_path)
 cat("Table S7 saved:", save_word_path, "\n")
