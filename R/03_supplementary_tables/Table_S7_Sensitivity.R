@@ -10,6 +10,7 @@ cat("--- Table S9: Hemoglobinopathy Sensitivity (GBD 2023) ---\n")
 if (!requireNamespace("here", quietly = TRUE)) install.packages("here")
 base_dir <- here::here()  # auto-detects project root
 path_country <- file.path(base_dir, "data/gbd2023_sdi_country_2023.csv.zip")
+path_trend   <- file.path(base_dir, "data/gbd2023_trend_1990_2023.csv.zip")
 path_sdi     <- file.path(base_dir, "data/gbd2023_sdi_values_1950_2023.csv")
 output_dir <- file.path(base_dir, "outputs/tables")
 save_word_path <- file.path(output_dir, "Table_S7_Sensitivity.docx")
@@ -71,7 +72,31 @@ df_struct <- calc_burden(structural_list, "Structural only")
 sdi_levels <- c("Global", "High SDI", "High-middle SDI", "Middle SDI",
                 "Low-middle SDI", "Low SDI")
 
-agg <- function(data) {
+# GBD-aggregated Global ASMR (population-weighted, consistent with Table 1).
+# Country-level death-weighted mean is preserved for SDI-quintile rows (no GBD aggregate
+# directly available at SDI-quintile level in the country file).
+df_trend <- read_csv(path_trend, show_col_types = FALSE)
+get_global_asmr <- function(causes) {
+  df_trend %>%
+    filter(location_name == "Global", year == 2023, age_name == "<5 years",
+           sex_name == "Both", measure_name == "Deaths",
+           metric_name == "Rate", cause_name %in% causes) %>%
+    summarise(asmr = sum(val, na.rm = TRUE)) %>% pull(asmr)
+}
+get_global_deaths <- function(causes) {
+  df_trend %>%
+    filter(location_name == "Global", year == 2023, age_name == "<5 years",
+           sex_name == "Both", measure_name == "Deaths",
+           metric_name == "Number", cause_name %in% causes) %>%
+    summarise(deaths = sum(val, na.rm = TRUE)) %>% pull(deaths)
+}
+all_cause_global <- df_trend %>%
+  filter(location_name == "Global", year == 2023, age_name == "<5 years",
+         sex_name == "Both", measure_name == "Deaths",
+         metric_name == "Number", cause_name == "All causes") %>%
+  pull(val)
+
+agg <- function(data, causes) {
   by_sdi <- data %>%
     filter(!is.na(sdi_group)) %>%
     group_by(sdi_group) %>%
@@ -80,17 +105,18 @@ agg <- function(data) {
               all_deaths = sum(all_deaths, na.rm = TRUE), .groups = "drop") %>%
     mutate(pmr = deaths / all_deaths * 100) %>%
     rename(Location = sdi_group)
+  # Global row uses GBD population-weighted aggregate (consistent with Table 1)
   global <- tibble(
     Location = "Global",
-    asmr = weighted.mean(data$asmr, data$deaths, na.rm = TRUE),
-    deaths = sum(data$deaths, na.rm = TRUE),
-    all_deaths = sum(data$all_deaths, na.rm = TRUE)
+    asmr = get_global_asmr(causes),
+    deaths = get_global_deaths(causes),
+    all_deaths = all_cause_global
   ) %>% mutate(pmr = deaths / all_deaths * 100)
   bind_rows(global, by_sdi)
 }
 
-df_a <- agg(df_all13) %>% rename(asmr_all = asmr, pmr_all = pmr) %>% select(Location, asmr_all, pmr_all)
-df_s <- agg(df_struct) %>% rename(asmr_struct = asmr, pmr_struct = pmr) %>% select(Location, asmr_struct, pmr_struct)
+df_a <- agg(df_all13, all_13) %>% rename(asmr_all = asmr, pmr_all = pmr) %>% select(Location, asmr_all, pmr_all)
+df_s <- agg(df_struct, structural_list) %>% rename(asmr_struct = asmr, pmr_struct = pmr) %>% select(Location, asmr_struct, pmr_struct)
 
 df_compare <- df_a %>%
   left_join(df_s, by = "Location") %>%
@@ -139,7 +165,7 @@ ft <- df_table %>% flextable() %>%
   padding(padding = 4, part = "all") %>%
   set_table_properties(layout = "autofit") %>%
   set_caption("Table S7. Sensitivity: with vs. without hemoglobinopathies (2023).") %>%
-  add_footer_lines("pp = percentage points.")
+  add_footer_lines("pp = percentage points. Global row reflects the GBD population-weighted aggregate (consistent with Table 1); SDI-quintile rows reflect death-weighted means of country values within each quintile.")
 
 save_as_docx(ft, path = save_word_path)
 cat("Table S9 saved:", save_word_path, "\n")
