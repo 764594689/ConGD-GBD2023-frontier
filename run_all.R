@@ -1,6 +1,6 @@
 # ==============================================================================
 # run_all.R — Reproduce all main and supplementary tables/figures
-# Companion code to: Ruan et al., Journal of Translational Medicine (under review)
+# Companion code to: Ruan et al., Frontiers in Public Health (under review)
 # ==============================================================================
 # Usage:
 #   1. Open this folder as an RStudio project, OR setwd() to the folder root.
@@ -64,10 +64,11 @@ for (f in sort(supp_figs)) run_script(file.path("R", "04_supplementary_figures",
 # Note on italic formatting:
 # Statistical symbols (df, n, P, R², t) that appear in long inline contexts
 # (e.g., paragraph footnotes within tables) should be italicized for
-# publication. Tables S5 and S11 use as_paragraph(as_i(...)) for inline
-# italic. For Tables S1, S6, S7, S12, italic formatting was applied
-# manually in the submitted docx; re-running these scripts produces
-# substantively identical output without italic styling on inline symbols.
+# publication. Tables S5 and S10 use as_paragraph(as_i(...)) for inline
+# italic. For some other tables, italic formatting was applied manually in
+# the submitted docx; re-running these scripts produces substantively
+# identical output without italic styling on inline symbols.
 # ----------------------------------------------------------------------------
+
 
 cat("\n\nAll analyses complete. Check outputs/ for results.\n")
