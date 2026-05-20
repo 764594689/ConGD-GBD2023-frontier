@@ -1,6 +1,6 @@
 # ==============================================================================
 # run_all.R — Reproduce all main and supplementary tables/figures
-# Companion code to: Ruan et al., Frontiers in Public Health (under review)
+# Companion code to: Tao et al., Frontiers in Public Health (under review)
 # ==============================================================================
 # Usage:
 #   1. Open this folder as an RStudio project, OR setwd() to the folder root.

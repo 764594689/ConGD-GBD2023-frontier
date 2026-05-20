@@ -3,7 +3,7 @@
 Code accompanying:
 
 > **Quantifying Avoidable Under-5 Mortality from Congenital and Genetic Disorders: A Composite Burden Assessment and Frontier Analysis Identifying Translational Intervention Targets Using GBD 2023**
-> Ruan J*, Tao Z*, Zhang K, Wu S, Zhou Y, Yu X, Zhang H, Zhang Y. *Journal of Translational Medicine* (under review).
+> Tao Z*, Ruan J*, Zhang K, Wu S, Zhou Y, Yu X, Zhang H, Liu G, Zhang Y. *Frontiers in Public Health* (under review).
 
 This repository contains all R scripts and aggregated GBD 2023 input data needed to reproduce every main and supplementary table/figure in the paper.
 
