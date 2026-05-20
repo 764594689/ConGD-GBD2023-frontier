@@ -44,31 +44,32 @@ df_base <- df_country %>%
 
 df_genetic_rate <- df_base %>%
   filter(cause_name %in% genetic_list, metric_name == "Rate") %>%
-  group_by(location_name) %>%
+  group_by(location_id, location_name) %>%
   summarise(total_rate = sum(val, na.rm = TRUE), .groups = "drop")
 
 df_genetic_num <- df_base %>%
   filter(cause_name %in% genetic_list, metric_name == "Number") %>%
-  group_by(location_name) %>%
+  group_by(location_id) %>%
   summarise(genetic_deaths = sum(val, na.rm = TRUE), .groups = "drop")
 
 df_all_num <- df_base %>%
   filter(cause_name == "All causes", metric_name == "Number") %>%
-  select(location_name, all_deaths = val)
+  dplyr::select(location_id, all_deaths = val)
 
 df_country_metrics <- df_genetic_rate %>%
-  left_join(df_genetic_num, by = "location_name") %>%
-  left_join(df_all_num, by = "location_name") %>%
+  left_join(df_genetic_num, by = "location_id") %>%
+  left_join(df_all_num, by = "location_id") %>%
   mutate(pmr_percent = (genetic_deaths / all_deaths) * 100)
 
 # --- SDI data ---
+# Join on location_id to avoid subnational homonyms (Georgia/Niger duplicates).
 df_sdi <- df_sdi_raw %>%
   filter(year_id == 2023) %>%
-  select(location_name, sdi = mean_value)
+  dplyr::select(location_id, sdi = mean_value)
 
 # --- Merge + SDI groups ---
 df_final <- df_country_metrics %>%
-  left_join(df_sdi, by = "location_name") %>%
+  left_join(df_sdi, by = "location_id") %>%
   filter(!is.na(sdi), !is.na(total_rate), !is.na(pmr_percent)) %>%
   mutate(
     sdi_group = case_when(

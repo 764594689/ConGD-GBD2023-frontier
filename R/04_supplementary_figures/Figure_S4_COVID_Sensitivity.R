@@ -33,7 +33,7 @@ df_base <- df_raw %>%
 
 df_all_deaths <- df_base %>%
   filter(cause_name == "All causes") %>%
-  select(year, all_deaths = val)
+  dplyr::select(year, all_deaths = val)
 
 df_genetic <- df_base %>%
   filter(cause_name %in% genetic_list) %>%
@@ -43,7 +43,7 @@ df_genetic <- df_base %>%
 
 df_cmnn <- df_base %>%
   filter(str_detect(cause_name, "Communicable, maternal")) %>%
-  select(year, deaths = val) %>%
+  dplyr::select(year, deaths = val) %>%
   mutate(cause_group = "CMNN")
 
 df_pmr <- bind_rows(df_genetic, df_cmnn) %>%

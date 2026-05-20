@@ -1,12 +1,12 @@
 # ==============================================================================
-# Supplementary Table S3: Age-Specific Mortality by Cause (2023)
+# Supplementary Table S4: Age-Specific Mortality by Cause (2023)
 # Data: gbd2023_age_specific_2023.csv.zip
 # ==============================================================================
 library(tidyverse)
 library(flextable)
 library(officer)
 
-cat("--- Table S3: Age-Specific Mortality (GBD 2023) ---\n")
+cat("--- Table S4: Age-Specific Mortality (GBD 2023) ---\n")
 
 if (!requireNamespace("here", quietly = TRUE)) install.packages("here")
 base_dir <- here::here()  # auto-detects project root
@@ -49,12 +49,12 @@ df_table <- df_base %>%
     " (", formatC(round(lower), format = "d", big.mark = ","),
     "\u2013", formatC(round(upper), format = "d", big.mark = ","), ")"
   )) %>%
-  select(cause_name, age_name, deaths_fmt) %>%
+  dplyr::select(cause_name, age_name, deaths_fmt) %>%
   pivot_wider(names_from = age_name, values_from = deaths_fmt) %>%
   mutate(Category = ifelse(cause_name %in% structural_list,
                            "Structural", "Hemoglobinopathy")) %>%
   arrange(Category, cause_name) %>%
-  select(Category, Cause = cause_name, all_of(age_order))
+  dplyr::select(Category, Cause = cause_name, all_of(age_order))
 
 # Add subtotals
 add_subtotal <- function(df, cat_name, causes) {
@@ -67,10 +67,10 @@ add_subtotal <- function(df, cat_name, causes) {
       " (", formatC(round(lower), format = "d", big.mark = ","),
       "\u2013", formatC(round(upper), format = "d", big.mark = ","), ")"
     )) %>%
-    select(age_name, deaths_fmt) %>%
+    dplyr::select(age_name, deaths_fmt) %>%
     pivot_wider(names_from = age_name, values_from = deaths_fmt) %>%
     mutate(Category = cat_name, Cause = paste0(cat_name, " Total")) %>%
-    select(Category, Cause, all_of(age_order))
+    dplyr::select(Category, Cause, all_of(age_order))
   sub
 }
 
@@ -129,4 +129,4 @@ save_as_docx(ft_s3, path = file.path(output_dir, "Table_S4_Age_Specific.docx"),
                page_margins = page_mar(bottom = 0.5, top = 0.5, right = 0.4, left = 0.4)
              ))
 
-cat("Table S3 saved.\n")
+cat("Table S4 saved.\n")

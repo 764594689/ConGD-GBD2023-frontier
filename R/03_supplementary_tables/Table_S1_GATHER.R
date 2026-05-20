@@ -1,12 +1,12 @@
 # ==============================================================================
-# Supplementary Table S4: GATHER Checklist
+# Supplementary Table S1: GATHER Checklist
 # No GBD data needed — compliance checklist
 # ==============================================================================
 library(tidyverse)
 library(flextable)
 library(officer)
 
-cat("--- Table S4: GATHER Checklist ---\n")
+cat("--- Table S1: GATHER Checklist ---\n")
 
 if (!requireNamespace("here", quietly = TRUE)) install.packages("here")
 base_dir <- here::here()  # auto-detects project root
@@ -43,7 +43,7 @@ df_s4 <- tibble(
   ),
   Reported = c(
     "Methods: 13 ConGD causes, 204 countries, under-5 population, 1990\u20132023.",
-    "Declarations: Funding section.",
+    "Funding section.",
     "Methods: GBD 2023 Results Tool (https://vizhub.healthdata.org/gbd-results/).",
     "Methods: Table S1 lists inclusion criteria; no ad hoc exclusions applied.",
     "Methods: GBD 2023 database; Details in GBD 2023 capstone publications.",
@@ -51,15 +51,15 @@ df_s4 <- tibble(
     "Methods: SDI covariate from GBD 2023 Socio-Demographic Index database.",
     "Methods: Descriptive epidemiology + quantile regression frontier analysis.",
     "Methods: Quantile regression (τ = 0.05) with natural cubic splines (df = 3) on log-ASMR vs SDI.",
-    "Methods & Table S7: Model diagnostics, pseudo-R\u00B2, knot sensitivity.",
-    "Figures S1, S3, S5; Tables S7, S9: Sensitivity and cross-validation results.",
+    "Methods & Table S5: Model diagnostics, pseudo-R\u00B2, knot sensitivity.",
+    "Figures S1\u2013S2; Tables S7, S11, S12: Sensitivity and cross-validation results.",
     "Methods: GBD uncertainty intervals propagated; bootstrap CI for frontier.",
-    "Table S7: Pseudo-R\u00B2 and coverage probability reported.",
-    "Table S2: Full 204-country dataset available as supplementary CSV.",
+    "Table S5: Pseudo-R\u00B2 and coverage probability reported.",
+    "Table S10: Full 204-country dataset (also provided as supplementary CSV).",
     "All estimates reported with 95% uncertainty intervals.",
-    "Discussion: Interpreted in context of epidemiological transition, translational gap.",
+    "Discussion: Interpreted in context of epidemiological transition, implementation gap.",
     "Discussion: Limitations subsection addresses data quality, ecological fallacy, confounding.",
-    "Declarations: Funding section."
+    "Funding section."
   )
 )
 
@@ -92,4 +92,4 @@ save_as_docx(ft_s4, path = file.path(output_dir, "Table_S1_GATHER.docx"),
                page_margins = page_mar(bottom = 0.8, top = 0.8, right = 0.6, left = 0.6)
              ))
 
-cat("Table S4 saved.\n")
+cat("Table S1 saved.\n")

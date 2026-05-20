@@ -185,21 +185,21 @@ cat("====================================================\n")
 cat("\n--- Panel A: Daily deaths by category and age ---\n")
 df_print <- df_summary %>%
   arrange(desc(age_label), category) %>%
-  select(age_label, category, total_deaths, daily_deaths)
+  dplyr::select(age_label, category, total_deaths, daily_deaths)
 print(as.data.frame(df_print))
 
 cat("\n--- Hemoglobinopathy values (for manual annotation in AI/PPT) ---\n")
 df_hemo <- df_summary %>%
   filter(category == "Hemoglobinopathies") %>%
   arrange(desc(age_label)) %>%
-  select(age_label, daily_deaths_hemo = daily_deaths, total_deaths_hemo = total_deaths)
+  dplyr::select(age_label, daily_deaths_hemo = daily_deaths, total_deaths_hemo = total_deaths)
 print(as.data.frame(df_hemo))
 
 cat("\n--- Panel B: Proportions ---\n")
 df_prop_print <- df_prop %>%
   arrange(desc(age_label), category) %>%
   mutate(pct = round(prop * 100, 1)) %>%
-  select(age_label, category, pct)
+  dplyr::select(age_label, category, pct)
 print(as.data.frame(df_prop_print))
 
 # Combined CGD percentages

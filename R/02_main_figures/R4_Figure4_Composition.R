@@ -131,6 +131,7 @@ p4a <- ggplot(df_a, aes(x = factor(year), y = share, fill = cause_display)) +
     panel.grid.minor = element_blank(),
     panel.grid.major.x = element_blank(),
     plot.title       = element_text(face = "bold", size = 22, hjust = 0),
+    axis.title       = element_text(face = "bold"),
     axis.text.x      = element_text(face = "bold"),
     legend.position  = "none",
     plot.margin      = margin(10, 5, 10, 10)
@@ -155,6 +156,7 @@ p4b <- ggplot(df_b, aes(x = factor(year), y = proportion,
     strip.background = element_rect(fill = "grey92", color = NA),
     panel.grid.minor   = element_blank(),
     panel.grid.major.x = element_blank(),
+    axis.title         = element_text(face = "bold"),
     axis.text.x        = element_text(face = "bold", angle = 45, hjust = 1),
     plot.title         = element_text(face = "bold", size = 22, hjust = 0),
     legend.position    = "none"

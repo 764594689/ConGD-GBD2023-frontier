@@ -31,15 +31,16 @@ df_mortality <- df_raw %>%
   filter(year == 2023, age_name == "<5 years", sex_name == "Both",
          measure_name == "Deaths", cause_name %in% genetic_list,
          metric_name == "Rate") %>%
-  group_by(location_name) %>%
+  group_by(location_id, location_name) %>%
   summarise(total_rate = sum(val, na.rm = TRUE), .groups = "drop")
 
+# Join on location_id to avoid subnational homonyms in the SDI file.
 df_sdi <- read_csv(path_sdi, show_col_types = FALSE) %>%
   filter(year_id == 2023) %>%
-  select(location_name, sdi_value = mean_value)
+  dplyr::select(location_id, sdi_value = mean_value)
 
 df_final <- df_mortality %>%
-  inner_join(df_sdi, by = "location_name") %>%
+  inner_join(df_sdi, by = "location_id") %>%
   drop_na(sdi_value, total_rate) %>%
   filter(total_rate > 0)
 

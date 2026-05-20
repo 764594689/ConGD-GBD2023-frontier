@@ -48,7 +48,7 @@ df_composite <- df_base %>%
 key_conditions <- c("Congenital heart anomalies", "G6PD deficiency", "Sickle cell disorders")
 df_by_cause <- df_base %>%
   filter(cause_name %in% key_conditions, metric_name == "Rate") %>%
-  select(year, sex_name, cause_name, asmr = val)
+  dplyr::select(year, sex_name, cause_name, asmr = val)
 
 df_ratio <- df_by_cause %>%
   pivot_wider(names_from = sex_name, values_from = asmr) %>%

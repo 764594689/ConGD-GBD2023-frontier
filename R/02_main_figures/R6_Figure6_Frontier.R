@@ -39,22 +39,26 @@ df_mortality <- df_raw %>%
   filter(year == 2023, age_name == "<5 years", sex_name == "Both",
          measure_name == "Deaths", cause_name %in% genetic_list,
          metric_name == "Rate") %>%
-  group_by(location_name) %>%
+  group_by(location_id, location_name) %>%
   summarise(total_rate = sum(val, na.rm = TRUE), .groups = "drop")
 
 df_number <- df_raw %>%
   filter(year == 2023, age_name == "<5 years", sex_name == "Both",
          measure_name == "Deaths", cause_name %in% genetic_list,
          metric_name == "Number") %>%
-  group_by(location_name) %>%
+  group_by(location_id) %>%
   summarise(total_deaths = sum(val, na.rm = TRUE), .groups = "drop")
 
 # --- SDI data ---
+# NOTE: the GBD SDI file contains subnational units that share a name with a
+# country (US state "Georgia" id=533 vs country id=35; Nigerian state "Niger"
+# id=25344 vs country id=213). Joining on location_name would fan those rows
+# out into duplicates. We therefore join on location_id, which is unambiguous.
 df_sdi_raw <- read_csv(path_sdi, show_col_types = FALSE)
 
 df_sdi <- df_sdi_raw %>%
   filter(year_id == 2023) %>%
-  select(location_name, sdi_value = mean_value) %>%
+  dplyr::select(location_id, sdi_value = mean_value) %>%
   mutate(sdi_group = case_when(
     sdi_value <= 0.454 ~ "Low SDI",
     sdi_value <= 0.608 ~ "Low-middle SDI",
@@ -67,8 +71,8 @@ df_sdi <- df_sdi_raw %>%
 
 # --- Merge ---
 df_final <- df_mortality %>%
-  inner_join(df_sdi, by = "location_name") %>%
-  left_join(df_number, by = "location_name") %>%
+  inner_join(df_sdi, by = "location_id") %>%
+  left_join(df_number, by = "location_id") %>%
   drop_na(sdi_value, total_rate) %>%
   filter(total_rate > 0)
 
@@ -111,7 +115,7 @@ cat(sprintf("Pseudo-R² (τ = 0.05) = %.4f\n", pseudo_r2_05))
 cat(sprintf("Pseudo-R² (tau=0.10) = %.4f\n", pseudo_r2_10))
 
 # Coefficients
-cat("\n=== Table S7: Frontier Regression Coefficients ===\n")
+cat("\n=== Frontier Regression Coefficients (Table S5) ===\n")
 cat("--- tau = 0.05 ---\n")
 print(summary(qr_model_05, se = "boot", R = 1000))
 cat("\n--- tau = 0.10 ---\n")
@@ -139,12 +143,12 @@ cat(sprintf("  Percent of ConGD deaths = %.1f%%\n", global_avoidable_pct))
 # Top-10 / Bottom-10
 cat("\n=== Top-10 (largest efficiency gaps) ===\n")
 top10 <- df_final %>% arrange(desc(efficiency_gap)) %>% head(10) %>%
-  select(location_name, sdi_group, sdi_value, total_rate, frontier_val, efficiency_gap, gap_pct)
+  dplyr::select(location_name, sdi_group, sdi_value, total_rate, frontier_val, efficiency_gap, gap_pct)
 print(as.data.frame(top10))
 
 cat("\n=== Bottom-10 (nearest frontier) ===\n")
 bottom10 <- df_final %>% arrange(efficiency_gap) %>% head(10) %>%
-  select(location_name, sdi_group, sdi_value, total_rate, frontier_val, efficiency_gap, gap_pct)
+  dplyr::select(location_name, sdi_group, sdi_value, total_rate, frontier_val, efficiency_gap, gap_pct)
 print(as.data.frame(bottom10))
 
 # ==============================================================================
@@ -220,7 +224,7 @@ ggsave(file.path(output_dir, "Figure6_Frontier.pdf"),
 
 # Export CSV
 write_csv(df_final %>%
-            select(location_name, sdi_value, sdi_group, total_rate,
+            dplyr::select(location_name, sdi_value, sdi_group, total_rate,
                    total_deaths, frontier_val, efficiency_gap, gap_pct,
                    avoidable_deaths) %>%
             arrange(desc(efficiency_gap)),

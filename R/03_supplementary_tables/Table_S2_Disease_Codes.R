@@ -1,12 +1,12 @@
 # ==============================================================================
-# Supplementary Table S1: Disease Classification and GBD Cause IDs
+# Supplementary Table S2: Disease Classification and GBD Cause IDs
 # No GBD data needed — hardcoded reference table
 # ==============================================================================
 library(tidyverse)
 library(flextable)
 library(officer)
 
-cat("--- Table S1: Disease Classification ---\n")
+cat("--- Table S2: Disease Classification ---\n")
 
 if (!requireNamespace("here", quietly = TRUE)) install.packages("here")
 base_dir <- here::here()  # auto-detects project root
@@ -74,4 +74,4 @@ save_as_docx(ft_s1, path = file.path(output_dir, "Table_S2_Disease_Codes.docx"),
                page_margins = page_mar(bottom = 1, top = 1, right = 0.8, left = 0.8)
              ))
 
-cat("Table S1 saved.\n")
+cat("Table S2 saved.\n")

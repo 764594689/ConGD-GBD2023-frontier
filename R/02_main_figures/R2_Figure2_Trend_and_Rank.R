@@ -66,7 +66,7 @@ df_a_base <- df_batch2 %>%
 # 全死因 (分母)
 df_all_deaths <- df_a_base %>%
   filter(cause_name == "All causes") %>%
-  select(year, all_deaths = val)
+  dplyr::select(year, all_deaths = val)
 
 # 遗传病总死亡数 (分子1)
 df_genetic_total <- df_a_base %>%
@@ -78,7 +78,7 @@ df_genetic_total <- df_a_base %>%
 # CMNN 总死亡数 (分子2) — 用 str_detect 处理含逗号的 cause_name
 df_cmnn_total <- df_a_base %>%
   filter(str_detect(cause_name, "Communicable, maternal")) %>%
-  select(year, deaths = val) %>%
+  dplyr::select(year, deaths = val) %>%
   mutate(cause_group = "CMNN (Total)")
 
 # 合并计算 PMR
@@ -115,7 +115,7 @@ available_rank_causes <- intersect(rank_causes, unique(df_b_base$cause_name))
 
 df_individual <- df_b_base %>%
   filter(cause_name %in% available_rank_causes) %>%
-  select(year, cause = cause_name, deaths = val)
+  dplyr::select(year, cause = cause_name, deaths = val)
 
 # 遗传病总量（从排名数据中汇总 13 causes）
 df_genetic_rank <- df_b_base %>%
@@ -144,6 +144,7 @@ theme_pub <- theme_minimal(base_size = 22) +
     plot.subtitle    = element_blank(),
     panel.grid.minor = element_blank(),
     panel.grid.major.x = element_blank(),
+    axis.title       = element_text(face = "bold"),
     legend.position  = "none"
   )
 

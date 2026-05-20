@@ -1,5 +1,5 @@
 # ==============================================================================
-# Table S8: Top-10 / Bottom-10 Countries by Efficiency Gap (GBD 2023)
+# Table S6: Top-10 / Bottom-10 Countries by Efficiency Gap (GBD 2023)
 # ==============================================================================
 library(tidyverse)
 library(quantreg)
@@ -7,7 +7,7 @@ library(splines)
 library(flextable)
 library(officer)
 
-cat("--- Table S8: Efficiency Gap Rankings (GBD 2023) ---\n")
+cat("--- Table S6: Efficiency Gap Rankings (GBD 2023) ---\n")
 
 if (!requireNamespace("here", quietly = TRUE)) install.packages("here")
 base_dir <- here::here()  # auto-detects project root
@@ -29,29 +29,26 @@ hemoglobin_list <- c(
 genetic_list <- c(structural_list, hemoglobin_list)
 
 df_raw <- read_csv(path_country, show_col_types = FALSE)
-# Normalize country-name apostrophes (straight ' -> smart ’)
-if ("location_name" %in% colnames(df_raw)) {
-  df_raw <- df_raw %>% mutate(location_name = gsub("'", "’", location_name, fixed = TRUE))
-}
-
 
 df_rate <- df_raw %>%
   filter(year == 2023, age_name == "<5 years", sex_name == "Both",
          measure_name == "Deaths", cause_name %in% genetic_list,
          metric_name == "Rate") %>%
-  group_by(location_name) %>%
+  group_by(location_id, location_name) %>%
   summarise(total_rate = sum(val, na.rm = TRUE), .groups = "drop")
 
 df_num <- df_raw %>%
   filter(year == 2023, age_name == "<5 years", sex_name == "Both",
          measure_name == "Deaths", cause_name %in% genetic_list,
          metric_name == "Number") %>%
-  group_by(location_name) %>%
+  group_by(location_id) %>%
   summarise(total_deaths = sum(val, na.rm = TRUE), .groups = "drop")
 
+# Join on location_id (not location_name) to avoid the GBD SDI file's
+# subnational homonyms (US state "Georgia", Nigerian state "Niger", etc.).
 df_sdi <- read_csv(path_sdi, show_col_types = FALSE) %>%
   filter(year_id == 2023) %>%
-  select(location_name, sdi_value = mean_value) %>%
+  dplyr::select(location_id, sdi_value = mean_value) %>%
   mutate(sdi_group = case_when(
     sdi_value <= 0.454 ~ "Low", sdi_value <= 0.608 ~ "Low-middle",
     sdi_value <= 0.701 ~ "Middle", sdi_value <= 0.813 ~ "High-middle",
@@ -59,8 +56,8 @@ df_sdi <- read_csv(path_sdi, show_col_types = FALSE) %>%
   ))
 
 df_final <- df_rate %>%
-  left_join(df_num, by = "location_name") %>%
-  inner_join(df_sdi, by = "location_name") %>%
+  left_join(df_num, by = "location_id") %>%
+  inner_join(df_sdi, by = "location_id") %>%
   drop_na(sdi_value, total_rate) %>% filter(total_rate > 0)
 
 # Frontier
@@ -83,14 +80,14 @@ cat(sprintf("\nGlobal avoidable: %s (%.1f%%)\n",
 
 top10 <- df_final %>% arrange(desc(efficiency_gap)) %>% head(10) %>%
   mutate(Rank = row_number()) %>%
-  select(Rank, Country = location_name, SDI_Quintile = sdi_group,
+  dplyr::select(Rank, Country = location_name, SDI_Quintile = sdi_group,
          SDI = sdi_value, Observed_ASMR = total_rate,
          Frontier_ASMR = frontier_asmr, Efficiency_Gap = efficiency_gap,
          Gap_pct = gap_pct)
 
 bottom10 <- df_final %>% arrange(efficiency_gap) %>% head(10) %>%
   mutate(Rank = row_number()) %>%
-  select(Rank, Country = location_name, SDI_Quintile = sdi_group,
+  dplyr::select(Rank, Country = location_name, SDI_Quintile = sdi_group,
          SDI = sdi_value, Observed_ASMR = total_rate,
          Frontier_ASMR = frontier_asmr, Efficiency_Gap = efficiency_gap,
          Gap_pct = gap_pct)
@@ -99,12 +96,16 @@ cat("\n--- Top 10 ---\n"); print(as.data.frame(top10))
 cat("\n--- Bottom 10 ---\n"); print(as.data.frame(bottom10))
 
 format_row <- function(df) {
+  # Use Unicode minus sign (U+2212) for negatives, consistent with manuscript.
+  um <- function(x, digits) gsub("-", "−",
+                                  formatC(round(x, digits), format = "f", digits = digits),
+                                  fixed = TRUE)
   df %>% mutate(
     SDI = formatC(round(SDI, 3), format = "f", digits = 3),
-    Observed_ASMR = formatC(round(Observed_ASMR, 2), format = "f", digits = 2),
-    Frontier_ASMR = formatC(round(Frontier_ASMR, 2), format = "f", digits = 2),
-    Efficiency_Gap = formatC(round(Efficiency_Gap, 2), format = "f", digits = 2),
-    Gap_pct = paste0(formatC(round(Gap_pct, 1), format = "f", digits = 1), "%")
+    Observed_ASMR = um(Observed_ASMR, 2),
+    Frontier_ASMR = um(Frontier_ASMR, 2),
+    Efficiency_Gap = um(Efficiency_Gap, 2),
+    Gap_pct = paste0(um(Gap_pct, 1), "%")
   )
 }
 
@@ -141,9 +142,9 @@ print(doc, target = save_word_path)
 
 # Export CSV
 write_csv(df_final %>%
-            select(location_name, sdi_value, sdi_group, total_rate,
+            dplyr::select(location_name, sdi_value, sdi_group, total_rate,
                    total_deaths, frontier_asmr, efficiency_gap, gap_pct, avoidable_deaths) %>%
             arrange(desc(efficiency_gap)),
           file.path(output_dir, "Table_S6_Efficiency_Gap_all_countries.csv"))
 
-cat("Table S8 saved:", save_word_path, "\n")
+cat("Table S6 saved:", save_word_path, "\n")

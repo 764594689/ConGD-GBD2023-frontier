@@ -33,9 +33,11 @@ df_raw <- read_csv(path_country, show_col_types = FALSE) %>%
   filter(year == 2023, age_name == "<5 years", sex_name == "Both",
          measure_name == "Deaths", metric_name == "Rate")
 
+# Join on location_id (not location_name) to avoid subnational homonyms
+# (e.g. country "Georgia" id=35 vs US-state "Georgia" id=533).
 df_sdi <- read_csv(path_sdi, show_col_types = FALSE) %>%
   filter(year_id == 2023) %>%
-  select(location_name, sdi_value = mean_value) %>%
+  dplyr::select(location_id, sdi_value = mean_value) %>%
   mutate(sdi_group = case_when(
     sdi_value <= 0.454 ~ "Low SDI", sdi_value <= 0.608 ~ "Low-middle SDI",
     sdi_value <= 0.701 ~ "Middle SDI", sdi_value <= 0.813 ~ "High-middle SDI",
@@ -46,9 +48,9 @@ df_sdi <- read_csv(path_sdi, show_col_types = FALSE) %>%
 make_group <- function(causes, label) {
   df_raw %>%
     filter(cause_name %in% causes) %>%
-    group_by(location_name) %>%
+    group_by(location_id, location_name) %>%
     summarise(rate = sum(val, na.rm = TRUE), .groups = "drop") %>%
-    inner_join(df_sdi, by = "location_name") %>%
+    inner_join(df_sdi, by = "location_id") %>%
     filter(rate > 0) %>%
     mutate(group = label)
 }

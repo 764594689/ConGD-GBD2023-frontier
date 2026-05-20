@@ -1,5 +1,5 @@
 # ==============================================================================
-# Table S7: Frontier Model Diagnostics (GBD 2023)
+# Table S5: Frontier Model Diagnostics (GBD 2023)
 # ==============================================================================
 library(tidyverse)
 library(quantreg)
@@ -7,7 +7,7 @@ library(splines)
 library(flextable)
 library(officer)
 
-cat("--- Table S7: Frontier Diagnostics (GBD 2023) ---\n")
+cat("--- Table S5: Frontier Diagnostics (GBD 2023) ---\n")
 
 if (!requireNamespace("here", quietly = TRUE)) install.packages("here")
 base_dir <- here::here()  # auto-detects project root
@@ -33,15 +33,16 @@ df_mortality <- df_raw %>%
   filter(year == 2023, age_name == "<5 years", sex_name == "Both",
          measure_name == "Deaths", cause_name %in% genetic_list,
          metric_name == "Rate") %>%
-  group_by(location_name) %>%
+  group_by(location_id, location_name) %>%
   summarise(total_rate = sum(val, na.rm = TRUE), .groups = "drop")
 
+# Join on location_id to avoid subnational homonyms in the SDI file.
 df_sdi <- read_csv(path_sdi, show_col_types = FALSE) %>%
   filter(year_id == 2023) %>%
-  select(location_name, sdi_value = mean_value)
+  dplyr::select(location_id, sdi_value = mean_value)
 
 df_final <- df_mortality %>%
-  inner_join(df_sdi, by = "location_name") %>%
+  inner_join(df_sdi, by = "location_id") %>%
   drop_na(sdi_value, total_rate) %>% filter(total_rate > 0)
 
 qr_05 <- rq(log(total_rate) ~ ns(sdi_value, df = 3), tau = 0.05, data = df_final)
@@ -70,10 +71,10 @@ cat(sprintf("τ = 0.10: R²=%.4f, Coverage=%.1f%%\n", d10$pseudo_r2, d10$coverag
 
 df_table <- tibble(
   Parameter = c("Pseudo-R\u00B2", "Empirical coverage (%)", "Interior knots (SDI)", "Boundary knots (SDI)"),
-  `τ = 0.05` = c(formatC(d05$pseudo_r2, format = "f", digits = 4),
+  `τ = 0.05` = c(formatC(d05$pseudo_r2, format = "f", digits = 2),
                    paste0(formatC(d05$coverage, format = "f", digits = 1), "%"),
                    d05$knots, d05$boundary),
-  `τ = 0.10` = c(formatC(d10$pseudo_r2, format = "f", digits = 4),
+  `τ = 0.10` = c(formatC(d10$pseudo_r2, format = "f", digits = 2),
                    paste0(formatC(d10$coverage, format = "f", digits = 1), "%"),
                    d10$knots, d10$boundary)
 )
@@ -101,4 +102,4 @@ ft <- ft %>%
           value = as_paragraph(as_i("\u03C4"), " = 0.10"))
 
 save_as_docx(ft, path = save_word_path)
-cat("Table S7 saved:", save_word_path, "\n")
+cat("Table S5 saved:", save_word_path, "\n")
