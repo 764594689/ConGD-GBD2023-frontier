@@ -59,12 +59,12 @@ df_gen_global_num <- df_global %>%
 # All causes Number
 df_all_global <- df_global %>%
   filter(cause_name == "All causes", metric_name == "Number") %>%
-  select(year, all_deaths = val)
+  dplyr::select(year, all_deaths = val)
 
 # CMNN Rate
 df_cmnn_global <- df_global %>%
-  filter(str_detect(cause_name, "Communicable, maternal"), metric_name == "Rate") %>%
-  select(year, cmnn_rate = val)
+  filter(str_detect(cause_name, "^Communicable, maternal, neonatal, and nutritional diseases$"), metric_name == "Rate") %>%
+  dplyr::select(year, cmnn_rate = val)
 
 df_global_calc <- df_gen_global_rate %>%
   left_join(df_gen_global_num, by = "year") %>%
@@ -102,7 +102,7 @@ df_sdi_calc <- df_sdi_q %>%
 
     # All causes Number (for PMR)
     all_data <- filter(., cause_name == "All causes", metric_name == "Number") %>%
-      select(location_name, year, all_deaths = val)
+      dplyr::select(location_name, year, all_deaths = val)
 
     rate_data %>%
       left_join(num_data, by = c("location_name", "year")) %>%
@@ -115,9 +115,9 @@ df_sdi_cmnn <- df_sdi_q %>%
   filter(location_name %in% sdi_levels,
          age_name == "<5 years", sex_name == "Both",
          measure_name == "Deaths", metric_name == "Rate",
-         str_detect(cause_name, "Communicable, maternal"),
+         str_detect(cause_name, "^Communicable, maternal, neonatal, and nutritional diseases$"),
          year %in% c(1990, 2023)) %>%
-  select(location_name, year, cmnn_rate = val)
+  dplyr::select(location_name, year, cmnn_rate = val)
 
 # ==============================================================================
 # Part 3: Format table
@@ -153,11 +153,11 @@ sdi_1990 <- df_sdi_calc %>% filter(year == 1990)
 sdi_2023 <- df_sdi_calc %>% filter(year == 2023)
 
 # CMNN 1990 and 2023 per SDI
-cmnn_1990 <- df_sdi_cmnn %>% filter(year == 1990) %>% select(location_name, cmnn_rate_1990 = cmnn_rate)
-cmnn_2023 <- df_sdi_cmnn %>% filter(year == 2023) %>% select(location_name, cmnn_rate_2023 = cmnn_rate)
+cmnn_1990 <- df_sdi_cmnn %>% filter(year == 1990) %>% dplyr::select(location_name, cmnn_rate_1990 = cmnn_rate)
+cmnn_2023 <- df_sdi_cmnn %>% filter(year == 2023) %>% dplyr::select(location_name, cmnn_rate_2023 = cmnn_rate)
 
 sdi_rows <- sdi_2023 %>%
-  left_join(sdi_1990 %>% select(location_name,
+  left_join(sdi_1990 %>% dplyr::select(location_name,
                                  cgd_rate_1990 = cgd_rate,
                                  cgd_rate_lower_1990 = cgd_rate_lower,
                                  cgd_rate_upper_1990 = cgd_rate_upper,
@@ -178,7 +178,7 @@ sdi_rows <- sdi_2023 %>%
                                  format = "f", digits = 1),
                          "\u2014")
   ) %>%
-  select(Location, ASMR_1990, PMR_1990, ASMR_2023, PMR_2023, Change_CGD, Change_CMNN)
+  dplyr::select(Location, ASMR_1990, PMR_1990, ASMR_2023, PMR_2023, Change_CGD, Change_CMNN)
 
 df_final <- bind_rows(global_row, sdi_rows) %>%
   mutate(Location = factor(Location,
