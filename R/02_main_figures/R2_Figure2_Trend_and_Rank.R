@@ -73,7 +73,7 @@ df_genetic_total <- df_a_base %>%
   filter(cause_name %in% target_genetic) %>%
   group_by(year) %>%
   summarise(deaths = sum(val, na.rm = TRUE), .groups = "drop") %>%
-  mutate(cause_group = "Total Genetic Disorders")
+  mutate(cause_group = "Total ConGD")
 
 # CMNN 总死亡数 (分子2) — 用 str_detect 处理含逗号的 cause_name
 df_cmnn_total <- df_a_base %>%
@@ -122,7 +122,7 @@ df_genetic_rank <- df_b_base %>%
   filter(cause_name %in% target_genetic) %>%
   group_by(year) %>%
   summarise(deaths = sum(val, na.rm = TRUE), .groups = "drop") %>%
-  mutate(cause = "Total Genetic Disorders")
+  mutate(cause = "Total ConGD")
 
 # 合并排名
 key_years <- c(1990, 2000, 2010, 2023)
@@ -132,7 +132,7 @@ df_panel_b <- bind_rows(df_individual, df_genetic_rank) %>%
   group_by(year) %>%
   mutate(rank = rank(-deaths, ties.method = "first")) %>%
   ungroup() %>%
-  mutate(is_genetic = ifelse(cause == "Total Genetic Disorders", "Yes", "No"))
+  mutate(is_genetic = ifelse(cause == "Total ConGD", "Yes", "No"))
 
 # ==============================================================================
 # 6. 画图
@@ -140,7 +140,7 @@ df_panel_b <- bind_rows(df_individual, df_genetic_rank) %>%
 
 theme_pub <- theme_minimal(base_size = 22) +
   theme(
-    plot.title       = element_text(face = "bold", size = 26, hjust = 0),
+    plot.title       = element_text(face = "bold", size = 36, hjust = 0),
     plot.subtitle    = element_blank(),
     panel.grid.minor = element_blank(),
     panel.grid.major.x = element_blank(),
@@ -152,7 +152,7 @@ theme_pub <- theme_minimal(base_size = 22) +
 plot_a <- ggplot(df_panel_a, aes(x = year, y = pmr, color = cause_group)) +
   geom_line(linewidth = 1.5) +
   scale_color_manual(values = c(
-    "Total Genetic Disorders" = "#0072B2",
+    "Total ConGD" = "#0072B2",
     "CMNN (Total)" = "#E69F00"
   )) +
   scale_y_continuous(labels = percent_format(accuracy = 1), limits = c(0, 1)) +
@@ -170,7 +170,7 @@ plot_a <- ggplot(df_panel_a, aes(x = year, y = pmr, color = cause_group)) +
     hjust = 0.5, nudge_y = -0.04, fontface = "bold", size = 7
   ) +
   geom_text(
-    data = filter(df_panel_a, year == max(df_panel_a$year) - 6 & cause_group == "Total Genetic Disorders"),
+    data = filter(df_panel_a, year == max(df_panel_a$year) - 6 & cause_group == "Total ConGD"),
     aes(label = cause_group),
     hjust = 0.5, nudge_y = 0.04, fontface = "bold", size = 7
   ) +
@@ -235,13 +235,13 @@ cat("\nFigure 2 已保存至:", output_dir, "\n")
 # ==============================================================================
 # 8. 输出 Results 数值
 # ==============================================================================
-g1990 <- round(filter(df_panel_a, year == 1990, cause_group == "Total Genetic Disorders")$pmr * 100, 2)
-g2023 <- round(filter(df_panel_a, year == 2023, cause_group == "Total Genetic Disorders")$pmr * 100, 2)
+g1990 <- round(filter(df_panel_a, year == 1990, cause_group == "Total ConGD")$pmr * 100, 2)
+g2023 <- round(filter(df_panel_a, year == 2023, cause_group == "Total ConGD")$pmr * 100, 2)
 c1990 <- round(filter(df_panel_a, year == 1990, cause_group == "CMNN (Total)")$pmr * 100, 2)
 c2023 <- round(filter(df_panel_a, year == 2023, cause_group == "CMNN (Total)")$pmr * 100, 2)
 
-r1990 <- filter(df_panel_b, year == 1990, cause == "Total Genetic Disorders")$rank
-r2023 <- filter(df_panel_b, year == 2023, cause == "Total Genetic Disorders")$rank
+r1990 <- filter(df_panel_b, year == 1990, cause == "Total ConGD")$rank
+r2023 <- filter(df_panel_b, year == 2023, cause == "Total ConGD")$rank
 
 cat("\n======================================================\n")
 cat("      RESULTS DATA FOR MANUSCRIPT                     \n")

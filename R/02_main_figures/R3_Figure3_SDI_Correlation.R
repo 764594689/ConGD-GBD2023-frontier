@@ -87,12 +87,13 @@ df_final <- df_country_metrics %>%
 cat(sprintf("Merged: %d countries\n", nrow(df_final)))
 
 # --- Plot function ---
-draw_sdi_plot <- function(data, y_var, title, y_lab, cor_pos_x, cor_pos_y, y_limit_max) {
+draw_sdi_plot <- function(data, y_var, title, y_lab, cor_pos_x, cor_pos_y, y_limit_max,
+                          show_cor = TRUE) {
   res <- cor.test(data$sdi, data[[y_var]], method = "spearman", exact = FALSE)
   rho_val <- sprintf("%.2f", res$estimate)
   label_expr <- paste0("italic(rho) == '", rho_val, "' * ',' ~ italic(P) < 0.001")
 
-  ggplot(data, aes(x = sdi, y = !!sym(y_var))) +
+  p <- ggplot(data, aes(x = sdi, y = !!sym(y_var))) +
     geom_point(aes(fill = sdi_group), shape = 21, size = 3, alpha = 0.7, color = "grey30") +
     geom_smooth(method = "loess", color = "black", fill = "grey85", alpha = 0.3, linewidth = 1.2) +
     scale_fill_manual(values = c(
@@ -104,16 +105,21 @@ draw_sdi_plot <- function(data, y_var, title, y_lab, cor_pos_x, cor_pos_y, y_lim
       aes(label = location_name),
       size = 3.8, fontface = "italic", force = 35, max.overlaps = 20,
       segment.color = "grey50", segment.size = 0.3, box.padding = 1.0, point.padding = 0.5
-    ) +
-    annotate("text", x = cor_pos_x, y = cor_pos_y,
-             label = label_expr, parse = TRUE,
-             size = 5.5, hjust = 0, fontface = "bold") +
+    )
+  # Reviewer request: report the correlation only for the ASMR-SDI panel (a true
+  # association); the PMR-SDI correlation is a compositional artifact and is not reported.
+  if (show_cor) {
+    p <- p + annotate("text", x = cor_pos_x, y = cor_pos_y,
+                      label = label_expr, parse = TRUE,
+                      size = 5.5, hjust = 0, fontface = "bold")
+  }
+  p +
     scale_y_continuous(limits = c(-5, y_limit_max), expand = c(0, 0)) +
     labs(title = title, x = "Socio-demographic Index (SDI)", y = y_lab, fill = "SDI Group") +
     theme_bw(base_size = 13) +
     theme(
       panel.grid.minor = element_blank(),
-      plot.title       = element_text(face = "bold", size = 14, hjust = 0),
+      plot.title       = element_text(face = "bold", size = 16, hjust = 0),
       legend.position  = "none",
       axis.title       = element_text(face = "bold")
     )
@@ -128,7 +134,8 @@ p3a <- draw_sdi_plot(df_final, "total_rate",
 p3b <- draw_sdi_plot(df_final, "pmr_percent",
                      "B",
                      "Proportional Mortality Ratio (%)",
-                     cor_pos_x = 0.05, cor_pos_y = 52, y_limit_max = 60)
+                     cor_pos_x = 0.05, cor_pos_y = 52, y_limit_max = 60,
+                     show_cor = FALSE)
 
 final_fig3 <- (p3a / p3b) +
   plot_layout(guides = "collect") &

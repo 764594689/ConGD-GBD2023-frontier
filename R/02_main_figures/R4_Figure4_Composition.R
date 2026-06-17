@@ -125,12 +125,12 @@ p4a <- ggplot(df_a, aes(x = factor(year), y = share, fill = cause_display)) +
   scale_fill_manual(values = my_palette, drop = FALSE) +
   scale_y_continuous(breaks = seq(0, 100, by = 20), expand = c(0, 0)) +
   coord_cartesian(ylim = c(0, 100)) +
-  labs(title = "A", x = NULL, y = "Share (%)") +
+  labs(title = "A", x = NULL, y = "Share of ConGD mortality (%)") +
   theme_minimal(base_size = 18) +
   theme(
     panel.grid.minor = element_blank(),
     panel.grid.major.x = element_blank(),
-    plot.title       = element_text(face = "bold", size = 22, hjust = 0),
+    plot.title       = element_text(face = "bold", size = 29, hjust = 0),
     axis.title       = element_text(face = "bold"),
     axis.text.x      = element_text(face = "bold"),
     legend.position  = "none",
@@ -149,7 +149,7 @@ p4b <- ggplot(df_b, aes(x = factor(year), y = proportion,
   facet_wrap(~sdi_group, nrow = 1) +
   scale_fill_manual(values = hemo_palette, drop = FALSE) +
   scale_y_continuous(expand = c(0, 0), limits = c(0, 100.1)) +
-  labs(title = "B", x = "Year", y = "Adjusted Share (%)") +
+  labs(title = "B", x = "Year", y = "Share within ConGD (%)") +
   theme_minimal(base_size = 18) +
   theme(
     strip.text       = element_text(face = "bold", size = 16),
@@ -158,7 +158,7 @@ p4b <- ggplot(df_b, aes(x = factor(year), y = proportion,
     panel.grid.major.x = element_blank(),
     axis.title         = element_text(face = "bold"),
     axis.text.x        = element_text(face = "bold", angle = 45, hjust = 1),
-    plot.title         = element_text(face = "bold", size = 22, hjust = 0),
+    plot.title         = element_text(face = "bold", size = 29, hjust = 0),
     legend.position    = "none"
   )
 
