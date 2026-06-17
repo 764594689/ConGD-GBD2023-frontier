@@ -135,9 +135,11 @@ The `data/` folder contains **aggregated CSV/CSV.ZIP files** generated from the 
 | `gbd2023_sdi_values_1950_2023.csv` | SDI by country & year, 1950–2023 | Frontier scripts |
 | `gbd2023_trend_1990_2023.csv.zip` | Global + region time series, 1990–2023 | Fig 2/4, Table 1, Table S9, Fig S4 |
 | `gbd2023_sdi_quintile_composition.csv.zip` | Cause composition by SDI quintile | Fig 4, Table 1 |
-| `gbd2023_age_specific_2023.csv.zip` | Age-specific mortality, 2023 | Fig 5, Table S4 |
+| `gbd2023_age_specific_2023.csv.zip` | Age-specific mortality (13 ConGD + infectious causes), 2023 | Fig 5, Table S4 |
+| `gbd2023_age_specific_allcause_2023.csv.zip` | All-cause under-5 deaths by age band, Global, 2023 | Fig 5B ("all other causes" band) |
 | `gbd2023_sex_stratified_1990_2023.csv.zip` | Sex-stratified ASMR, 1990–2023 | Fig S3, Table S8 |
 | `gbd2023_rank_causes.csv.zip` | Top causes ranking by year | Fig 2 |
+| `gbd2023_daly_1990_2023.csv.zip` | ConGD DALYs, Global + regions, 1990–2023 | Table S15 (DALY) |
 | `gbd_vr_stars.csv` | VR data quality stars (parsed from GBD 2019 appendix) | Table S11 |
 
 ### What is **not** included
@@ -151,6 +153,8 @@ If you wish to regenerate the aggregated files in `data/`, query GHDx with:
 - Sex: `Both` (and `Male`, `Female` for sex-stratified analyses)
 - Years: 1990–2023
 - Measures: `Deaths`, both `Number` and `Rate`
+
+For Figure 5B only, one additional query is required (saved as `data/gbd2023_age_specific_allcause_2023.csv.zip`): Cause = `All causes`, Location = `Global`, Sex = `Both`, Measure = `Deaths`, Metric = `Number`, the six under-5 age groups (0–6 days, 7–27 days, 1–5 months, 6–11 months, 12–23 months, 2–4 years), year 2023. The script derives the "all other under-5 causes" band as the all-cause total minus the 18 charted causes.
 
 ---
 
